@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  users:
+    # build from Dockerfile
+    build: 
+      context: ./services/users
+      dockerfile: Dockerfile-dev
+    ports:
+      - "5000:5000"
+    container_name: "users"
+    volumes:
+      - './services/users:/usr/src/app'
+    environment:
+      - FLASK_APP=project/__init__.py
+      - FLASK_DEBUG=1
+      - APP_SETTINGS=project.config.DevelopmentConfig
+      - DATABASE_URL=postgresql://postgres:postgres@users-db:5432/users_dev
+      - DATABASE_TEST_URL=postgresql://postgres:postgres@users-db:5432/users_test
+    command: "python manage.py run -h 0.0.0.0"
+    depends_on:
+      - users-db
+
+  users-db:
+    build:
+      context: ./services/users/project/db
+      dockerfile: Dockerfile
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    container_name: users-db

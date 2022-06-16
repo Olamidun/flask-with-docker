@@ -1,0 +1,17 @@
+FROM python:3.8-slim-buster
+
+# Where application will live in the container
+RUN mkdir -p /usr/src/app
+
+WORKDIR /usr/src/app
+
+# Move requirements.txt into the container
+COPY ./requirements.txt /usr/src/app/requirements.txt
+
+# Install dependencies in requirements.txt file
+RUN pip install -r requirements.txt
+
+# Copy application folder and files into container
+COPY . /usr/src/app
+
+
